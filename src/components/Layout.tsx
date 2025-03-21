@@ -60,7 +60,9 @@ const Layout: React.FC<LayoutProps> = ({
                 <img 
                   src={logoUrl} 
                   alt="Logo" 
-                  className="h-32 w-auto object-contain"
+                  className="h-40 w-auto object-contain max-w-full"
+                  style={{ imageRendering: 'high-quality' }}
+                  loading="eager"
                 />
               </div>
             )}
