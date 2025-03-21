@@ -56,7 +56,7 @@ const Index = () => {
         <img 
           src={morningsideLogoUrl} 
           alt="Morningside Logo" 
-          className="h-12 mb-8"
+          className="h-20 mb-8"
         />
         
         <div className="flex justify-center space-x-10 mb-12 w-full">
