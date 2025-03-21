@@ -9,7 +9,7 @@ import { useUserData } from '@/context/UserDataContext';
 import { Bot, Zap, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const morningsideLogoUrl = "https://placehold.co/200x60?text=Morningside+AI";
+const morningsideLogoUrl = "/lovable-uploads/14dbe0ac-9cc9-482d-a71f-707e0d7deebf.png";
 
 const Index = () => {
   const { userData, setApiKey, setCurrentStep } = useUserData();
@@ -55,8 +55,8 @@ const Index = () => {
       <div className="flex flex-col items-center max-w-xl mx-auto">
         <img 
           src={morningsideLogoUrl} 
-          alt="Morningside AI Logo" 
-          className="h-16 mb-8"
+          alt="Morningside Logo" 
+          className="h-12 mb-8"
         />
         
         <div className="flex justify-center space-x-10 mb-12 w-full">
