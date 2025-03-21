@@ -81,7 +81,7 @@ const generateAISolutions = async (userData: any) => {
         steps: [
           'Use Beautiful.ai for AI-powered presentation design',
           'Generate compelling copy and talking points with ChatGPT',
-          'Create custom visuals with Canva's AI features'
+          'Create custom visuals with Canva\'s AI features'
         ]
       }
     ];
@@ -163,7 +163,7 @@ const AIReport = () => {
     
     toast({
       title: 'Thank you for your feedback!',
-      description: helpful ? 'We're glad you found the recommendations helpful.' : 'We'll use your feedback to improve.',
+      description: helpful ? 'We\'re glad you found the recommendations helpful.' : 'We\'ll use your feedback to improve.',
       duration: 3000,
     });
   };
