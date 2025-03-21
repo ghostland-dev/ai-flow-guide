@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -53,13 +52,6 @@ const Index = () => {
       showNextButton={false}
     >
       <div className="flex flex-col items-center max-w-xl mx-auto">
-        <h1 className="text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-ai-green-700 to-ai-blue-600 font-bold">
-          Automate Your Workflow with AI
-        </h1>
-        <p className="text-center text-ai-neutral-600 dark:text-ai-neutral-300 text-lg md:text-xl mb-8">
-          Let us guide you through implementing AI in your workflow
-        </p>
-        
         <img 
           src={morningsideLogoUrl} 
           alt="Morningside Logo" 
