@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -50,14 +51,9 @@ const Index = () => {
       totalSteps={5}
       showBackButton={false}
       showNextButton={false}
+      logoUrl={morningsideLogoUrl}
     >
       <div className="flex flex-col items-center max-w-xl mx-auto">
-        <img 
-          src={morningsideLogoUrl} 
-          alt="Morningside Logo" 
-          className="h-32 mb-12 w-auto object-contain"
-        />
-        
         <div className="flex justify-center space-x-10 mb-12 w-full">
           <motion.div 
             className="text-center"

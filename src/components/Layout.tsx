@@ -19,6 +19,7 @@ interface LayoutProps {
   nextDisabled?: boolean;
   onNext?: () => void;
   ctaText?: string;
+  logoUrl?: string;
 }
 
 const Layout: React.FC<LayoutProps> = ({
@@ -34,6 +35,7 @@ const Layout: React.FC<LayoutProps> = ({
   nextDisabled = false,
   onNext,
   ctaText = 'Continue',
+  logoUrl,
 }) => {
   const { setCurrentStep } = useUserData();
   
@@ -53,6 +55,15 @@ const Layout: React.FC<LayoutProps> = ({
         
         <div className="glass-panel p-6 md:p-10 animate-scale-in">
           <header className="mb-8">
+            {logoUrl && (
+              <div className="flex justify-center mb-8">
+                <img 
+                  src={logoUrl} 
+                  alt="Logo" 
+                  className="h-32 w-auto object-contain"
+                />
+              </div>
+            )}
             <h1 className="text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-ai-green-700 to-ai-blue-600 font-bold">
               {title}
             </h1>
