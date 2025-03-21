@@ -53,10 +53,17 @@ const Index = () => {
       showNextButton={false}
     >
       <div className="flex flex-col items-center max-w-xl mx-auto">
+        <h1 className="text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-ai-green-700 to-ai-blue-600 font-bold">
+          Automate Your Workflow with AI
+        </h1>
+        <p className="text-center text-ai-neutral-600 dark:text-ai-neutral-300 text-lg md:text-xl mb-8">
+          Let us guide you through implementing AI in your workflow
+        </p>
+        
         <img 
           src={morningsideLogoUrl} 
           alt="Morningside Logo" 
-          className="h-20 mb-8"
+          className="h-32 mb-12 w-auto object-contain"
         />
         
         <div className="flex justify-center space-x-10 mb-12 w-full">
