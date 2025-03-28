@@ -1,13 +1,65 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { useUserData } from '@/context/UserDataContext';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { Printer, Download, Mail, Save, CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { motion } from 'framer-motion';
+
+// Define learning resource interface
+interface LearningResource {
+  title: string;
+  url: string;
+  type: 'Video' | 'Documentation' | 'Tutorial' | 'Article';
+}
+
+// Mock learning resources for tools
+const getToolResources = (toolName: string): LearningResource[] => {
+  const resources: Record<string, LearningResource[]> = {
+    'ChatGPT': [
+      { title: 'OpenAI Official Documentation', url: 'https://platform.openai.com/docs/introduction', type: 'Documentation' },
+      { title: 'ChatGPT Prompt Engineering Guide', url: 'https://youtu.be/gDPmotZ9IbQ', type: 'Video' },
+      { title: 'Building AI Applications with ChatGPT', url: 'https://www.deeplearning.ai/short-courses/building-systems-with-chatgpt/', type: 'Tutorial' },
+    ],
+    'Zapier': [
+      { title: 'Zapier Getting Started Guide', url: 'https://zapier.com/learn/getting-started-guide/', type: 'Documentation' },
+      { title: 'Zapier for Beginners', url: 'https://youtu.be/b-tYxL-n0Rs', type: 'Video' },
+      { title: 'Automating Your Workflow with Zapier', url: 'https://zapier.com/learn/automation-for-small-businesses/', type: 'Tutorial' },
+    ],
+    'Make.com': [
+      { title: 'Make.com Documentation', url: 'https://www.make.com/en/help/documentation', type: 'Documentation' },
+      { title: 'Make.com Beginner Tutorial', url: 'https://youtu.be/H5NdtVCbWG4', type: 'Video' },
+      { title: 'Building Your First Scenario', url: 'https://www.make.com/en/help/tutorials', type: 'Tutorial' },
+    ],
+    'Jasper': [
+      { title: 'Jasper AI Documentation', url: 'https://help.jasper.ai/', type: 'Documentation' },
+      { title: 'Content Creation with Jasper', url: 'https://youtu.be/yzrfQbBJFKY', type: 'Video' },
+      { title: 'Jasper AI for Marketing Content', url: 'https://www.jasper.ai/blog/how-to-use-jasper', type: 'Article' },
+    ],
+    'Buffer': [
+      { title: 'Buffer Knowledge Base', url: 'https://support.buffer.com/', type: 'Documentation' },
+      { title: 'Social Media Scheduling with Buffer', url: 'https://youtu.be/F5o-5z908pc', type: 'Video' },
+      { title: 'Buffer Analytics Guide', url: 'https://buffer.com/resources/social-media-analytics/', type: 'Article' },
+    ],
+    'Notion AI': [
+      { title: 'Notion AI Documentation', url: 'https://www.notion.so/help/guides/using-notion-ai', type: 'Documentation' },
+      { title: 'Notion AI Tutorial for Beginners', url: 'https://youtu.be/PYwOr9zT1W8', type: 'Video' },
+      { title: 'Enhance Your Productivity with Notion AI', url: 'https://www.notion.so/blog/notion-ai', type: 'Article' },
+    ],
+  };
+  
+  // Default resources for tools not in our predefined list
+  const defaultResources: LearningResource[] = [
+    { title: `${toolName} Official Documentation`, url: 'https://www.google.com/search?q=' + encodeURIComponent(`${toolName} documentation`), type: 'Documentation' },
+    { title: `${toolName} Tutorial`, url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(`${toolName} tutorial`), type: 'Video' },
+    { title: `How to Get Started with ${toolName}`, url: 'https://www.google.com/search?q=' + encodeURIComponent(`how to use ${toolName} guide`), type: 'Article' },
+  ];
+  
+  return resources[toolName] || defaultResources;
+};
 
 const ImplementationStep = ({ number, title, description, isCompleted = false }: any) => (
   <div className="flex items-start space-x-4 p-4 rounded-lg hover:bg-ai-neutral-50 dark:hover:bg-ai-neutral-800/40 transition-colors duration-200">
@@ -25,52 +77,66 @@ const ImplementationStep = ({ number, title, description, isCompleted = false }:
   </div>
 );
 
+const ToolCard = ({ toolName }: { toolName: string }) => {
+  const [resources, setResources] = useState<LearningResource[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  useEffect(() => {
+    setResources(getToolResources(toolName));
+  }, [toolName]);
+  
+  return (
+    <div className="p-4 bg-white dark:bg-ai-neutral-800/50 rounded-lg border border-ai-neutral-200 dark:border-ai-neutral-700 shadow-sm">
+      <h4 className="font-medium mb-2">{toolName}</h4>
+      <p className="text-sm text-ai-neutral-600 dark:text-ai-neutral-400 mb-3">
+        {toolName.includes('GPT') 
+          ? 'AI language model to generate and process text content.' 
+          : toolName.includes('Zapier') || toolName.includes('Make')
+            ? 'Automation tool to connect apps and automate workflows.'
+            : 'Tool to enhance and streamline your workflow.'}
+      </p>
+      
+      <Button 
+        variant="link" 
+        className="text-ai-blue-600 dark:text-ai-blue-400 p-0 h-auto mt-0 text-sm"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        Learn more <ArrowRight className="w-3 h-3 ml-1" />
+      </Button>
+      
+      {isExpanded && (
+        <div className="mt-3 pt-3 border-t border-ai-neutral-200 dark:border-ai-neutral-700">
+          <h5 className="text-sm font-medium mb-2">Resources:</h5>
+          <ul className="space-y-2">
+            {resources.map((resource, i) => (
+              <li key={i}>
+                <a 
+                  href={resource.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-ai-blue-600 dark:text-ai-blue-400 flex items-center hover:underline"
+                >
+                  <span className="inline-block mr-1 px-1.5 py-0.5 text-xs rounded bg-ai-blue-100 dark:bg-ai-blue-900/30 text-ai-blue-800 dark:text-ai-blue-300">
+                    {resource.type}
+                  </span>
+                  {resource.title}
+                  <ExternalLink className="w-3 h-3 ml-1 inline" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ImplementationGuide = () => {
   const { userData } = useUserData();
   const { toast } = useToast();
   
   const solutions = userData.aiReport?.solutions || [];
   
-  // Handle export actions
-  const handleExport = (type: 'print' | 'pdf' | 'email' | 'save') => {
-    let message = '';
-    
-    switch (type) {
-      case 'print':
-        message = 'Preparing document for printing...';
-        break;
-      case 'pdf':
-        message = 'Generating PDF download...';
-        break;
-      case 'email':
-        message = 'Preparing to send guide to your email...';
-        break;
-      case 'save':
-        message = 'Saving guide to your profile...';
-        break;
-    }
-    
-    toast({
-      title: message,
-      duration: 2000,
-    });
-    
-    // Simulate success after delay
-    setTimeout(() => {
-      toast({
-        title: 'Success',
-        description: type === 'email' 
-          ? 'Guide sent to your email!' 
-          : type === 'pdf' 
-            ? 'PDF downloaded successfully'
-            : type === 'print'
-              ? 'Document sent to printer'
-              : 'Guide saved to your profile',
-        duration: 3000,
-      });
-    }, 1500);
-  };
-
   return (
     <AnimatedTransition>
       <Layout
@@ -126,23 +192,7 @@ const ImplementationGuide = () => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {solution.aiTools.map((tool: string, i: number) => (
-                        <div 
-                          key={i}
-                          className="p-4 bg-white dark:bg-ai-neutral-800/50 rounded-lg border border-ai-neutral-200 dark:border-ai-neutral-700 shadow-sm"
-                        >
-                          <h4 className="font-medium mb-2">{tool}</h4>
-                          <p className="text-sm text-ai-neutral-600 dark:text-ai-neutral-400">
-                            {/* Mock descriptions based on the tool name */}
-                            {tool.includes('GPT') 
-                              ? 'AI language model to generate and process text content.' 
-                              : tool.includes('Zapier') || tool.includes('Make')
-                                ? 'Automation tool to connect apps and automate workflows.'
-                                : 'Tool to enhance and streamline your workflow.'}
-                          </p>
-                          <Button variant="link" className="text-ai-blue-600 dark:text-ai-blue-400 p-0 h-auto mt-2 text-sm">
-                            Learn more <ArrowRight className="w-3 h-3 ml-1" />
-                          </Button>
-                        </div>
+                        <ToolCard key={i} toolName={tool} />
                       ))}
                     </div>
                   </div>
@@ -161,7 +211,7 @@ const ImplementationGuide = () => {
                           number={i + 1}
                           title={step}
                           description={
-                            // Generate mock detailed descriptions
+                            // Generate detailed descriptions based on the step
                             `Detailed instructions for how to ${step.toLowerCase()}. This would include specific configuration steps, best practices, and troubleshooting tips.`
                           }
                           isCompleted={false}
@@ -173,49 +223,6 @@ const ImplementationGuide = () => {
               </TabsContent>
             ))}
           </Tabs>
-          
-          <motion.div 
-            className="flex flex-wrap gap-4 justify-center mt-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Button
-              variant="outline"
-              onClick={() => handleExport('print')}
-              className="flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              Print Guide
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={() => handleExport('pdf')}
-              className="flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Download PDF
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={() => handleExport('email')}
-              className="flex items-center gap-2"
-            >
-              <Mail className="w-4 h-4" />
-              Email Guide
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={() => handleExport('save')}
-              className="flex items-center gap-2"
-            >
-              <Save className="w-4 h-4" />
-              Save to Profile
-            </Button>
-          </motion.div>
           
           <motion.div 
             className="p-6 glass-panel mt-8 text-center"

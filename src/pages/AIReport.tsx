@@ -3,116 +3,156 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useUserData } from '@/context/UserDataContext';
-import { ThumbsUp, ThumbsDown, Copy, Download, ArrowRight, Loader2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { motion } from 'framer-motion';
+import RestrictedTextField from '@/components/RestrictedTextField';
 
-// Mock API call to generate AI solutions
+// Enhanced AI solutions generator that uses user's specific inputs
 const generateAISolutions = async (userData: any) => {
-  // In a real app, this would be an API call to OpenAI or similar
   console.log('Generating AI solutions with user data:', userData);
   
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 2000));
   
-  // Return mock data based on user's profile and work context
+  // Extract user data for tailored solutions
   const department = userData.profile?.department || '';
+  const role = userData.profile?.role || '';
   const tasks = userData.workContext?.regularTasks || [];
   const challenges = userData.workContext?.challenges || [];
+  const objectives = userData.profile?.keyObjectives || [];
+  const tools = userData.profile?.techStack || [];
   
   let solutions = [];
   
+  // Generate tailored solutions based on user data
   if (department === 'Marketing') {
+    const contentChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('content') || c.toLowerCase().includes('writing')
+    );
+    
+    const analyticsChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('analytics') || c.toLowerCase().includes('data') || c.toLowerCase().includes('metrics')
+    );
+    
+    const socialChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('social') || c.toLowerCase().includes('engagement') || c.toLowerCase().includes('audience')
+    );
+    
     solutions = [
       {
-        taskChallenge: 'Automate content creation and distribution',
+        taskChallenge: contentChallenge || 'Automate content creation and distribution',
         aiTools: ['ChatGPT', 'Jasper', 'Buffer'],
         steps: [
-          'Use ChatGPT to generate content outlines and drafts',
-          'Refine content with Jasper for brand voice consistency',
-          'Schedule distribution through Buffer with Zapier automation'
+          `Use ChatGPT to generate ${tasks.find((t: string) => t.toLowerCase().includes('content') || t.toLowerCase().includes('writing')) || 'content'} outlines and drafts`,
+          `Refine content with Jasper for ${objectives.find((o: string) => o.toLowerCase().includes('brand') || o.toLowerCase().includes('voice')) || 'brand voice'} consistency`,
+          `Schedule distribution through Buffer with ${tools.find((t: string) => t.toLowerCase().includes('automation')) || 'automation'} integration`
         ]
       },
       {
-        taskChallenge: 'Streamline social media monitoring and engagement',
+        taskChallenge: socialChallenge || 'Streamline social media monitoring and engagement',
         aiTools: ['Mention', 'HootSuite', 'ChatGPT'],
         steps: [
-          'Set up Mention to track brand mentions and competitor activity',
-          'Use ChatGPT to draft personalized response templates',
-          'Integrate with HootSuite for centralized engagement management'
+          `Set up Mention to track ${objectives.find((o: string) => o.toLowerCase().includes('brand')) || 'brand'} mentions and competitor activity`,
+          `Use ChatGPT to draft personalized ${tasks.find((t: string) => t.toLowerCase().includes('response') || t.toLowerCase().includes('engagement')) || 'response'} templates`,
+          `Integrate with HootSuite for centralized ${tasks.find((t: string) => t.toLowerCase().includes('social') || t.toLowerCase().includes('community')) || 'engagement'} management`
         ]
       },
       {
-        taskChallenge: 'Automate campaign performance analysis',
+        taskChallenge: analyticsChallenge || 'Automate campaign performance analysis',
         aiTools: ['Google Analytics', 'Supermetrics', 'PowerBI'],
         steps: [
-          'Connect campaign data sources with Supermetrics',
-          'Set up automated data processing workflows',
-          'Create PowerBI dashboards with AI-assisted insights'
+          `Connect ${tasks.find((t: string) => t.toLowerCase().includes('campaign') || t.toLowerCase().includes('report')) || 'campaign'} data sources with Supermetrics`,
+          `Set up automated data processing workflows for ${objectives.find((o: string) => o.toLowerCase().includes('efficiency') || o.toLowerCase().includes('reporting')) || 'efficient reporting'}`,
+          `Create PowerBI dashboards with AI-assisted insights for ${objectives.find((o: string) => o.toLowerCase().includes('decision') || o.toLowerCase().includes('strategy')) || 'strategic decision-making'}`
         ]
       }
     ];
   } else if (department === 'Sales') {
+    const leadChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('lead') || c.toLowerCase().includes('prospect')
+    );
+    
+    const communicationChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('communication') || c.toLowerCase().includes('follow-up') || c.toLowerCase().includes('email')
+    );
+    
+    const presentationChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('presentation') || c.toLowerCase().includes('proposal') || c.toLowerCase().includes('pitch')
+    );
+    
     solutions = [
       {
-        taskChallenge: 'Automate lead qualification and prioritization',
+        taskChallenge: leadChallenge || 'Automate lead qualification and prioritization',
         aiTools: ['Clearbit', 'HubSpot', 'ChatGPT'],
         steps: [
-          'Use Clearbit to enrich lead data automatically',
-          'Implement predictive lead scoring in HubSpot',
-          'Generate personalized outreach scripts with ChatGPT'
+          `Use Clearbit to enrich ${tasks.find((t: string) => t.toLowerCase().includes('lead') || t.toLowerCase().includes('prospect')) || 'lead'} data automatically`,
+          `Implement predictive lead scoring in HubSpot based on ${objectives.find((o: string) => o.toLowerCase().includes('revenue') || o.toLowerCase().includes('sales')) || 'conversion potential'}`,
+          `Generate personalized outreach scripts with ChatGPT for ${tasks.find((t: string) => t.toLowerCase().includes('outreach') || t.toLowerCase().includes('communication')) || 'initial outreach'}`
         ]
       },
       {
-        taskChallenge: 'Streamline follow-up communications',
+        taskChallenge: communicationChallenge || 'Streamline follow-up communications',
         aiTools: ['ChatGPT', 'Lavender', 'Salesforce'],
         steps: [
-          'Create email templates with ChatGPT based on prospect types',
-          'Use Lavender to optimize email copy and timing',
-          'Set up automated sequences in Salesforce'
+          `Create email templates with ChatGPT based on ${tasks.find((t: string) => t.toLowerCase().includes('follow') || t.toLowerCase().includes('communication')) || 'follow-up'} needs`,
+          `Use Lavender to optimize email copy and timing for ${objectives.find((o: string) => o.toLowerCase().includes('response') || o.toLowerCase().includes('engagement')) || 'better response rates'}`,
+          `Set up automated sequences in ${tools.find((t: string) => t.toLowerCase().includes('salesforce') || t.toLowerCase().includes('crm')) || 'Salesforce'} to maintain engagement`
         ]
       },
       {
-        taskChallenge: 'Enhance sales presentations and proposals',
+        taskChallenge: presentationChallenge || 'Enhance sales presentations and proposals',
         aiTools: ['Beautiful.ai', 'ChatGPT', 'Canva'],
         steps: [
-          'Use Beautiful.ai for AI-powered presentation design',
-          'Generate compelling copy and talking points with ChatGPT',
-          'Create custom visuals with Canva\'s AI features'
+          `Use Beautiful.ai for AI-powered ${tasks.find((t: string) => t.toLowerCase().includes('presentation') || t.toLowerCase().includes('slide')) || 'presentation'} design`,
+          `Generate compelling copy and talking points with ChatGPT focused on ${objectives.find((o: string) => o.toLowerCase().includes('conversion') || o.toLowerCase().includes('closing')) || 'closing deals'}`,
+          `Create custom visuals with Canva's AI features that highlight ${tasks.find((t: string) => t.toLowerCase().includes('value') || t.toLowerCase().includes('benefit')) || 'value propositions'}`
         ]
       }
     ];
   } else {
-    // Default solutions for other departments
+    // Default solutions tailored to user inputs regardless of department
+    const adminChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('admin') || c.toLowerCase().includes('repetitive') || c.toLowerCase().includes('manual')
+    );
+    
+    const documentChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('document') || c.toLowerCase().includes('content') || c.toLowerCase().includes('file')
+    );
+    
+    const meetingChallenge = challenges.find((c: string) => 
+      c.toLowerCase().includes('meeting') || c.toLowerCase().includes('communication') || c.toLowerCase().includes('collaboration')
+    );
+    
     solutions = [
       {
-        taskChallenge: 'Automate repetitive administrative tasks',
+        taskChallenge: adminChallenge || 'Automate repetitive administrative tasks',
         aiTools: ['Zapier', 'Make.com', 'ChatGPT'],
         steps: [
-          'Identify repetitive tasks suitable for automation',
-          'Create workflows in Zapier or Make.com to connect apps',
-          'Use ChatGPT to generate templates for common communications'
+          `Identify ${tasks.filter((t: string) => t.toLowerCase().includes('repetitive') || t.toLowerCase().includes('manual')).length > 0 ? tasks.filter((t: string) => t.toLowerCase().includes('repetitive') || t.toLowerCase().includes('manual'))[0] : 'repetitive tasks'} for automation`,
+          `Create workflows in ${tools.find((t: string) => t.toLowerCase().includes('zapier') || t.toLowerCase().includes('automation')) || 'Zapier or Make.com'} to connect your apps`,
+          `Use ChatGPT to generate templates for ${tasks.find((t: string) => t.toLowerCase().includes('email') || t.toLowerCase().includes('communication')) || 'common communications'}`
         ]
       },
       {
-        taskChallenge: 'Streamline document creation and management',
+        taskChallenge: documentChallenge || 'Streamline document creation and management',
         aiTools: ['ChatGPT', 'Notion AI', 'DocuSign'],
         steps: [
-          'Use ChatGPT to draft initial document content',
-          'Organize and enhance documents with Notion AI',
-          'Automate signature collection with DocuSign'
+          `Use ChatGPT to draft initial ${tasks.find((t: string) => t.toLowerCase().includes('document') || t.toLowerCase().includes('content')) || 'document'} content`,
+          `Organize and enhance documents with ${tools.find((t: string) => t.toLowerCase().includes('notion') || t.toLowerCase().includes('document')) || 'Notion AI'}`,
+          `Automate signature collection with DocuSign for ${objectives.find((o: string) => o.toLowerCase().includes('efficiency') || o.toLowerCase().includes('productivity')) || 'improved efficiency'}`
         ]
       },
       {
-        taskChallenge: 'Improve meeting efficiency and note-taking',
+        taskChallenge: meetingChallenge || 'Improve meeting efficiency and note-taking',
         aiTools: ['Otter.ai', 'Fireflies.ai', 'ChatGPT'],
         steps: [
-          'Record meetings with Otter.ai for automatic transcription',
-          'Use Fireflies.ai to capture action items automatically',
-          'Generate meeting summaries with ChatGPT'
+          `Record ${tasks.find((t: string) => t.toLowerCase().includes('meeting') || t.toLowerCase().includes('call')) || 'meetings'} with Otter.ai for automatic transcription`,
+          `Use Fireflies.ai to capture ${objectives.find((o: string) => o.toLowerCase().includes('action') || o.toLowerCase().includes('task')) || 'action items'} automatically`,
+          `Generate ${tasks.find((t: string) => t.toLowerCase().includes('summary') || t.toLowerCase().includes('report')) || 'meeting summaries'} with ChatGPT`
         ]
       }
     ];
@@ -140,9 +180,9 @@ const AIReport = () => {
       } catch (error) {
         console.error('Error generating AI solutions:', error);
         toast({
-          title: 'Error',
-          description: 'Failed to generate AI recommendations. Please try again.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to generate AI recommendations. Please try again.",
+          variant: "destructive",
         });
       } finally {
         setIsLoading(false);
@@ -162,8 +202,8 @@ const AIReport = () => {
     setFeedbackGiven(true);
     
     toast({
-      title: 'Thank you for your feedback!',
-      description: helpful ? 'We\'re glad you found the recommendations helpful.' : 'We\'ll use your feedback to improve.',
+      title: "Thank you for your feedback!",
+      description: helpful ? "We're glad you found the recommendations helpful." : "We'll use your feedback to improve.",
       duration: 3000,
     });
   };
@@ -178,26 +218,9 @@ const AIReport = () => {
     navigator.clipboard.writeText(reportText);
     
     toast({
-      title: 'Report copied to clipboard',
+      title: "Report copied to clipboard",
       duration: 3000,
     });
-  };
-  
-  // Simulate downloading a PDF
-  const handleDownloadReport = () => {
-    toast({
-      title: 'Report download started',
-      description: 'Your AI implementation plan is being prepared as a PDF',
-      duration: 3000,
-    });
-    
-    // In a real app, this would generate and download a PDF
-    setTimeout(() => {
-      toast({
-        title: 'Report downloaded successfully',
-        duration: 3000,
-      });
-    }, 2000);
   };
 
   return (
@@ -237,15 +260,6 @@ const AIReport = () => {
                 >
                   <Copy className="w-4 h-4" />
                   Copy
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleDownloadReport}
-                  className="flex items-center gap-1"
-                >
-                  <Download className="w-4 h-4" />
-                  Download PDF
                 </Button>
               </div>
             </div>
@@ -329,11 +343,15 @@ const AIReport = () => {
                   </div>
                   
                   <div>
-                    <Textarea
-                      placeholder="What would make this more useful? (optional)"
+                    <RestrictedTextField
+                      id="feedback-comment"
+                      label="Your Specific Feedback"
                       value={feedbackComment}
-                      onChange={(e) => setFeedbackComment(e.target.value)}
-                      className="input-with-focus bg-white/70 dark:bg-black/30 mt-4"
+                      onChange={setFeedbackComment}
+                      placeholder="What would make this more useful? Please be specific."
+                      helperText="Please provide detailed feedback to help us improve."
+                      maxLength={300}
+                      className="mt-4"
                     />
                   </div>
                 </div>
