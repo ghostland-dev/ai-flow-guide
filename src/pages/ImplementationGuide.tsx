@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { useUserData } from '@/context/UserDataContext';
@@ -41,7 +40,7 @@ const getToolResources = (toolName: string): LearningResource[] => {
     ],
     'Buffer': [
       { title: 'Buffer Knowledge Base', url: 'https://support.buffer.com/', type: 'Documentation' },
-      { title: 'Social Media Scheduling with Buffer', url: 'https://youtu.be/F5o-5z908pc', type: 'Video' },
+      { title: 'Social Media Scheduling with Buffer', url: 'https://www.youtube.com/watch?v=11xXAiqlPco&t=3s', type: 'Video' },
       { title: 'Buffer Analytics Guide', url: 'https://buffer.com/resources/social-media-analytics/', type: 'Article' },
     ],
     'Notion AI': [
