@@ -4,113 +4,72 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Label } from '@/components/ui/label';
 import { useUserData } from '@/context/UserDataContext';
-import MultiSelect from '@/components/MultiSelect';
+import RestrictedTextField from '@/components/RestrictedTextField';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { motion } from 'framer-motion';
-
-// These would normally come from API/backend based on user's profile
-const getResponsibilitiesByRole = (role: string, department: string): string[] => {
-  // Just some sample data for demonstration purposes
-  if (department === 'Marketing') {
-    return [
-      'Content creation', 'Campaign management', 'Analytics tracking',
-      'Social media management', 'Email marketing', 'Lead generation',
-      'Brand development', 'SEO optimization', 'Market research',
-      'Competitor analysis', 'Customer journey mapping'
-    ];
-  } else if (department === 'Sales') {
-    return [
-      'Lead prospecting', 'Sales presentations', 'Deal negotiation',
-      'Customer relationship management', 'Pipeline management',
-      'Sales forecasting', 'Territory planning', 'Product demonstrations',
-      'Closing deals', 'Contract management'
-    ];
-  } else {
-    return [
-      'Project management', 'Team leadership', 'Strategic planning',
-      'Budget management', 'Resource allocation', 'Performance analysis',
-      'Process improvement', 'Stakeholder communication', 'Risk management',
-      'Decision making', 'Problem solving'
-    ];
-  }
-};
-
-const getTasksByRole = (role: string, department: string): string[] => {
-  // Just some sample data for demonstration purposes
-  if (department === 'Marketing') {
-    return [
-      'Writing blog posts', 'Creating social media content', 'Setting up ad campaigns',
-      'Analyzing marketing metrics', 'Conducting A/B tests', 'Creating email newsletters',
-      'Optimizing landing pages', 'Designing marketing materials', 'Managing the content calendar'
-    ];
-  } else if (department === 'Sales') {
-    return [
-      'Cold calling', 'Sending follow-up emails', 'Updating CRM data',
-      'Creating sales proposals', 'Scheduling client meetings', 'Preparing sales reports',
-      'Conducting product demos', 'Negotiating with clients', 'Managing sales pipeline'
-    ];
-  } else {
-    return [
-      'Email communication', 'Creating reports', 'Scheduling meetings',
-      'Data analysis', 'Research', 'Document preparation',
-      'Presenting information', 'Taking notes', 'Managing calendars'
-    ];
-  }
-};
-
-const getChallengesByRole = (role: string, department: string): string[] => {
-  // Just some sample data for demonstration purposes
-  return [
-    'Time management', 'Too many repetitive tasks', 'Information overload',
-    'Keeping up with industry trends', 'Managing multiple projects',
-    'Communication challenges', 'Data organization', 'Meeting deadlines',
-    'Prioritizing tasks', 'Maintaining work-life balance'
-  ];
-};
 
 const WorkContext = () => {
   const navigate = useNavigate();
   const { userData, setWorkContext } = useUserData();
   
-  const role = userData.profile?.role || '';
-  const department = userData.profile?.department || '';
-  
-  const [responsibilities, setResponsibilities] = useState<string[]>(
-    userData.workContext?.responsibilities || []
+  const [responsibility, setResponsibility] = useState<string>(
+    userData.workContext?.responsibilities?.[0] || ''
   );
-  const [tasks, setTasks] = useState<string[]>(
-    userData.workContext?.regularTasks || []
+  const [task, setTask] = useState<string>(
+    userData.workContext?.regularTasks?.[0] || ''
   );
-  const [challenges, setChallenges] = useState<string[]>(
-    userData.workContext?.challenges || []
+  const [challenge, setChallenge] = useState<string>(
+    userData.workContext?.challenges?.[0] || ''
   );
-  
-  const [responsibilityOptions, setResponsibilityOptions] = useState<string[]>([]);
-  const [taskOptions, setTaskOptions] = useState<string[]>([]);
-  const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
   
   const [isFormValid, setIsFormValid] = useState(false);
   
-  useEffect(() => {
-    setResponsibilityOptions(getResponsibilitiesByRole(role, department));
-    setTaskOptions(getTasksByRole(role, department));
-    setChallengeOptions(getChallengesByRole(role, department));
-  }, [role, department]);
+  // Suggestions for the restricted text fields based on role and department
+  const getResponsibilitySuggestion = () => {
+    const role = userData.profile?.role || '';
+    const department = userData.profile?.department || '';
+    
+    if (department === 'Marketing') {
+      return "e.g., Content creation, Campaign management, Social media marketing";
+    } else if (department === 'Sales') {
+      return "e.g., Lead generation, Client relationships, Sales presentations";
+    } else {
+      return "e.g., Project management, Team leadership, Strategic planning";
+    }
+  };
+  
+  const getTaskSuggestion = () => {
+    const role = userData.profile?.role || '';
+    const department = userData.profile?.department || '';
+    
+    if (department === 'Marketing') {
+      return "e.g., Writing blog posts, Creating social media content, Analyzing metrics";
+    } else if (department === 'Sales') {
+      return "e.g., Cold calling, Sending follow-up emails, Creating proposals";
+    } else {
+      return "e.g., Email communication, Creating reports, Data analysis";
+    }
+  };
+  
+  const getChallengeSuggestion = () => {
+    return "e.g., Time management, Information overload, Managing multiple projects";
+  };
   
   useEffect(() => {
-    // Check if at least one field from each section is filled
+    // Check if all fields are filled
     setIsFormValid(
-      responsibilities.length > 0 && 
-      tasks.length > 0 && 
-      challenges.length > 0
+      responsibility.trim().length > 0 && 
+      task.trim().length > 0 && 
+      challenge.trim().length > 0
     );
-  }, [responsibilities, tasks, challenges]);
+  }, [responsibility, task, challenge]);
   
   const handleContinue = () => {
+    // Save all inputs as single-item arrays to maintain compatibility with existing code
     setWorkContext({
-      responsibilities,
-      regularTasks: tasks,
-      challenges,
+      responsibilities: [responsibility],
+      regularTasks: [task],
+      challenges: [challenge],
     });
     
     navigate('/ai-report');
@@ -120,7 +79,7 @@ const WorkContext = () => {
     <AnimatedTransition>
       <Layout
         title="Define Your Workflow"
-        subtitle="Select your responsibilities, tasks, and challenges"
+        subtitle="Tell us about your key responsibility, task, and challenge"
         step={3}
         totalSteps={5}
         backTo="/build-profile"
@@ -143,18 +102,22 @@ const WorkContext = () => {
           >
             <div className="flex items-center space-x-3">
               <div className="bg-ai-green-100 w-8 h-8 rounded-full flex items-center justify-center text-ai-green-700 font-medium">1</div>
-              <Label className="text-lg font-medium">Key Responsibilities</Label>
+              <Label className="text-lg font-medium">Key Responsibility</Label>
             </div>
             <p className="text-sm text-ai-neutral-600 dark:text-ai-neutral-400 pl-11">
-              Select the main responsibilities in your role
+              What is the most important responsibility in your role?
             </p>
             
             <div className="pl-11">
-              <MultiSelect
-                options={responsibilityOptions}
-                selectedOptions={responsibilities}
-                onChange={setResponsibilities}
-                placeholder="Select or add responsibilities..."
+              <RestrictedTextField
+                id="responsibility"
+                label="Your Key Responsibility"
+                value={responsibility}
+                onChange={setResponsibility}
+                placeholder={getResponsibilitySuggestion()}
+                helperText="Be specific about your main area of responsibility"
+                maxLength={150}
+                required={true}
                 className="w-full"
               />
             </div>
@@ -168,18 +131,22 @@ const WorkContext = () => {
           >
             <div className="flex items-center space-x-3">
               <div className="bg-ai-blue-100 w-8 h-8 rounded-full flex items-center justify-center text-ai-blue-700 font-medium">2</div>
-              <Label className="text-lg font-medium">Regular Tasks</Label>
+              <Label className="text-lg font-medium">Regular Task</Label>
             </div>
             <p className="text-sm text-ai-neutral-600 dark:text-ai-neutral-400 pl-11">
-              Select the tasks you perform regularly that could be automated
+              What task do you perform regularly that could be automated?
             </p>
             
             <div className="pl-11">
-              <MultiSelect
-                options={taskOptions}
-                selectedOptions={tasks}
-                onChange={setTasks}
-                placeholder="Select or add tasks..."
+              <RestrictedTextField
+                id="task"
+                label="Your Regular Task"
+                value={task}
+                onChange={setTask}
+                placeholder={getTaskSuggestion()}
+                helperText="Describe a task you do frequently that takes up your time"
+                maxLength={150}
+                required={true}
                 className="w-full"
               />
             </div>
@@ -193,18 +160,22 @@ const WorkContext = () => {
           >
             <div className="flex items-center space-x-3">
               <div className="bg-ai-purple-100 w-8 h-8 rounded-full flex items-center justify-center text-ai-purple-700 font-medium">3</div>
-              <Label className="text-lg font-medium">Challenges</Label>
+              <Label className="text-lg font-medium">Key Challenge</Label>
             </div>
             <p className="text-sm text-ai-neutral-600 dark:text-ai-neutral-400 pl-11">
-              Select the challenges you face in your work
+              What is your biggest work-related challenge?
             </p>
             
             <div className="pl-11">
-              <MultiSelect
-                options={challengeOptions}
-                selectedOptions={challenges}
-                onChange={setChallenges}
-                placeholder="Select or add challenges..."
+              <RestrictedTextField
+                id="challenge"
+                label="Your Key Challenge"
+                value={challenge}
+                onChange={setChallenge}
+                placeholder={getChallengeSuggestion()}
+                helperText="Describe a significant challenge you face in your work"
+                maxLength={150}
+                required={true}
                 className="w-full"
               />
             </div>
