@@ -36,7 +36,7 @@ const getToolResources = (toolName: string): LearningResource[] => {
     ],
     'Jasper': [
       { title: 'Jasper AI Documentation', url: 'https://help.jasper.ai/', type: 'Documentation' },
-      { title: 'Content Creation with Jasper', url: 'https://youtu.be/yzrfQbBJFKY', type: 'Video' },
+      { title: 'Content Creation with Jasper', url: 'https://www.youtube.com/watch?v=SqI3CvKV4j8', type: 'Video' },
       { title: 'Jasper AI for Marketing Content', url: 'https://www.jasper.ai/blog/how-to-use-jasper', type: 'Article' },
     ],
     'Buffer': [
