@@ -21,7 +21,7 @@ const getToolResources = (toolName: string): LearningResource[] => {
   const resources: Record<string, LearningResource[]> = {
     'ChatGPT': [
       { title: 'OpenAI Official Documentation', url: 'https://platform.openai.com/docs/introduction', type: 'Documentation' },
-      { title: 'ChatGPT Prompt Engineering Guide', url: 'https://youtu.be/gDPmotZ9IbQ', type: 'Video' },
+      { title: 'ChatGPT Prompt Engineering Guide', url: 'https://www.youtube.com/watch?v=PDw3Uk9dN9k', type: 'Video' },
       { title: 'Building AI Applications with ChatGPT', url: 'https://www.deeplearning.ai/short-courses/building-systems-with-chatgpt/', type: 'Tutorial' },
     ],
     'Zapier': [
