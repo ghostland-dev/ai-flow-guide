@@ -1,24 +1,19 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useUserData } from '@/context/UserDataContext';
-import { ThumbsUp, ThumbsDown, Copy, ArrowRight, Loader2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import AnimatedTransition from '@/components/AnimatedTransition';
 import { motion } from 'framer-motion';
 import RestrictedTextField from '@/components/RestrictedTextField';
 
-// Enhanced AI solutions generator that uses user's specific inputs
 const generateAISolutions = async (userData: any) => {
   console.log('Generating AI solutions with user data:', userData);
   
-  // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 2000));
   
-  // Extract user data for tailored solutions
   const department = userData.profile?.department || '';
   const role = userData.profile?.role || '';
   const tasks = userData.workContext?.regularTasks || [];
@@ -28,7 +23,6 @@ const generateAISolutions = async (userData: any) => {
   
   let solutions = [];
   
-  // Generate tailored solutions based on user data
   if (department === 'Marketing') {
     const contentChallenge = challenges.find((c: string) => 
       c.toLowerCase().includes('content') || c.toLowerCase().includes('writing')
@@ -114,7 +108,6 @@ const generateAISolutions = async (userData: any) => {
       }
     ];
   } else {
-    // Default solutions tailored to user inputs regardless of department
     const adminChallenge = challenges.find((c: string) => 
       c.toLowerCase().includes('admin') || c.toLowerCase().includes('repetitive') || c.toLowerCase().includes('manual')
     );
@@ -360,21 +353,6 @@ const AIReport = () => {
                   Thank you for your feedback! We'll use it to improve our recommendations.
                 </div>
               )}
-            </motion.div>
-            
-            <motion.div 
-              className="flex justify-center mt-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <Button 
-                onClick={handleContinue}
-                className="accent-button group text-lg"
-              >
-                View Implementation Guide
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
             </motion.div>
           </motion.div>
         )}
